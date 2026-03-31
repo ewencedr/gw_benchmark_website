@@ -1,65 +1,125 @@
-import Image from 'next/image';
+import Link from 'next/link';
+import { HeroVideo } from '@/components/hero-video';
+import { LeaderboardTable } from '@/components/leaderboard-table';
+import { RippleDivider } from '@/components/ripple-divider';
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { getLeaderboard, getBenchmarks } from '@/lib/supabase/queries';
 
-export default function Home() {
+const navCards = [
+  {
+    href: '/leaderboards',
+    title: 'Leaderboards',
+    description: 'Explore results across all benchmark tasks and metrics.',
+  },
+  {
+    href: '/benchmarks',
+    title: 'Benchmarks',
+    description: 'Learn about the inference tasks and data generation.',
+  },
+  {
+    href: '/evaluation',
+    title: 'Evaluation',
+    description: 'Metrics, scoring procedures, and calibration tests.',
+  },
+  {
+    href: '/submit',
+    title: 'Submit',
+    description: 'Submit your method and join the benchmark.',
+  },
+];
+
+export default async function HomePage() {
+  const benchmarks = await getBenchmarks();
+  const primaryBenchmark = benchmarks[0];
+
+  const { entries, metrics } = primaryBenchmark
+    ? await getLeaderboard(primaryBenchmark.id)
+    : { entries: [], metrics: [] };
+
+  const topEntries = entries.slice(0, 5);
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{' '}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{' '}
-            or the{' '}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{' '}
-            center.
-          </p>
+    <>
+      <HeroVideo
+        title={
+          <>
+            Gravitational Wave
+            <br />
+            <span className="from-gw-orange to-gw-purple bg-gradient-to-r bg-clip-text text-transparent">
+              SBI Benchmark
+            </span>
+          </>
+        }
+        subtitle="A standardised benchmark for Simulation-Based Inference methods applied to gravitational wave data analysis."
+      >
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/leaderboards">
+            <Button size="lg" className="font-medium">
+              View Leaderboard
+            </Button>
+          </Link>
+          <Link href="/submit">
+            <Button variant="outline" size="lg" className="font-medium">
+              Submit Your Method
+            </Button>
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </HeroVideo>
+
+      <RippleDivider />
+
+      {primaryBenchmark && topEntries.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-16">
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Leading Results
+              </h2>
+              <p className="text-muted-foreground mt-1">
+                Top submissions on{' '}
+                <span className="text-gw-orange">{primaryBenchmark.name}</span>
+              </p>
+            </div>
+            <Link href="/leaderboards">
+              <Button variant="ghost" size="sm">
+                View all &rarr;
+              </Button>
+            </Link>
+          </div>
+
+          <LeaderboardTable
+            entries={topEntries}
+            metrics={metrics}
+            compact={true}
+          />
+        </section>
+      )}
+
+      <RippleDivider />
+
+      <section className="mx-auto max-w-6xl px-4 py-16">
+        <h2 className="mb-8 text-center text-2xl font-bold tracking-tight">
+          Explore the Benchmark
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {navCards.map((card) => (
+            <Link key={card.href} href={card.href} className="group">
+              <Card className="border-border/50 bg-card/50 group-hover:border-gw-orange/40 group-hover:bg-card/80 h-full transition-colors">
+                <CardHeader>
+                  <CardTitle className="text-lg">{card.title}</CardTitle>
+                  <CardDescription>{card.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

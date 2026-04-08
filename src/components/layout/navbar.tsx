@@ -22,16 +22,13 @@ export function Navbar() {
     <nav className="border-border/50 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2.5">
-          <div className="from-gw-orange to-gw-purple flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br">
-            <svg
-              viewBox="0 0 24 24"
-              className="h-5 w-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M2 12c0 0 4-6 10-6s10 6 10 6-4 6-10 6S2 12 2 12z" />
-            </svg>
+          <div className="flex h-8 w-8 items-center justify-center">
+            <img
+              src="/gw_benchmark_logo.svg"
+              alt="GW-SBI Benchmark"
+              className="h-8 w-8 object-contain"
+              draggable={false}
+            />
           </div>
           <span className="text-lg font-semibold tracking-tight">
             GW-SBI <span className="text-muted-foreground">Benchmark</span>

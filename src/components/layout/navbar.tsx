@@ -53,7 +53,7 @@ export function Navbar() {
         </div>
 
         <button
-          className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-md md:hidden"
+          className="text-muted-foreground hover:text-foreground flex h-9 w-9 cursor-pointer items-center justify-center rounded-md md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >

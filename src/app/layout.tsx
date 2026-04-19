@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     'Simulation-Based Inference Benchmark for Gravitational Wave Astronomy',
   icons: {
     icon: [
+      { url: '/favicon.ico', type: 'image/x-icon', sizes: 'any' },
       { url: '/gw_benchmark_logo.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', type: 'image/x-icon' },
       { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
     ],
     apple: [

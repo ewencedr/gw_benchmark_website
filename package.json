@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run build",
+    "prebuild": "npm run icons:generate",
     "icons:generate": "node scripts/generate-icons.mjs",
     "prepare": "husky"
   },
@@ -47,6 +48,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "png-to-ico": "^2.1.0",
+    "pngjs": "^7.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4",

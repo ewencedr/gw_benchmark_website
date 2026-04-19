@@ -21,6 +21,18 @@ export const metadata: Metadata = {
 const linkClass =
   'text-gw-orange hover:text-gw-orange-light underline underline-offset-4';
 
+const submitCtaButtonClass =
+  'from-gw-orange to-gw-purple bg-linear-to-r h-auto min-w-0 shrink whitespace-normal px-8 py-5 text-center text-base font-medium leading-snug text-white hover:opacity-90 sm:px-10 sm:py-6 sm:leading-normal';
+
+function SubmitPosteriorSamplesCtaLabel() {
+  return (
+    <span className="flex flex-col items-center gap-1 text-center sm:flex-row sm:gap-1.5 sm:whitespace-nowrap">
+      <span>Submit posterior samples</span>
+      <span>(coming soon)</span>
+    </span>
+  );
+}
+
 export default function SubmitPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-12 px-4 py-16">
@@ -56,12 +68,12 @@ export default function SubmitPage() {
         </p>
       </section>
 
-      <div className="flex justify-center">
+      <div className="mx-auto flex w-full max-w-lg justify-center sm:max-w-none">
         <Button
           size="lg"
-          className="from-gw-orange to-gw-purple bg-linear-to-r px-10 py-6 text-base font-medium text-white hover:opacity-90"
+          className={`${submitCtaButtonClass} w-full sm:w-auto sm:shrink-0`}
         >
-          Submit posterior samples (coming soon)
+          <SubmitPosteriorSamplesCtaLabel />
         </Button>
       </div>
 
@@ -155,13 +167,15 @@ export default function SubmitPage() {
         </Card>
       </section>
 
-      <div className="flex flex-col items-center gap-3">
-        <Button
-          size="lg"
-          className="from-gw-orange to-gw-purple bg-linear-to-r px-10 py-6 text-base font-medium text-white hover:opacity-90"
-        >
-          Submit posterior samples (coming soon)
-        </Button>
+      <div className="flex w-full flex-col items-center gap-3">
+        <div className="mx-auto flex w-full max-w-lg justify-center sm:max-w-none">
+          <Button
+            size="lg"
+            className={`${submitCtaButtonClass} w-full sm:w-auto sm:shrink-0`}
+          >
+            <SubmitPosteriorSamplesCtaLabel />
+          </Button>
+        </div>
         <p className="text-center text-xs text-white/45">
           {submitCopy.footerNote}
         </p>

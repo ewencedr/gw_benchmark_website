@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { pickPrimaryLevel0Benchmark } from '@/lib/benchmark-picks';
 import { getLeaderboard, getBenchmarks } from '@/lib/supabase/queries';
 import { homeCopy } from '@/content/site-copy';
 
@@ -49,7 +50,7 @@ const navCards = [
 export default async function HomePage() {
   const benchmarks = await getBenchmarks();
   const primaryBenchmark =
-    benchmarks.find((b) => b.slug === 'bbh-pe-l0') ?? benchmarks[0];
+    pickPrimaryLevel0Benchmark(benchmarks) ?? benchmarks[0];
 
   const { entries, metrics } = primaryBenchmark
     ? await getLeaderboard(primaryBenchmark.id)
@@ -169,13 +170,13 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 hidden justify-center md:flex">
           <Link href="/submit" className="w-full max-w-md">
             <Button
               size="lg"
               className="from-gw-orange to-gw-purple w-full bg-linear-to-r px-12 py-7 text-lg font-semibold text-white hover:opacity-90"
             >
-              Submit your method for blind evaluation →
+              Submit your method
             </Button>
           </Link>
         </div>
@@ -192,7 +193,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="border-border/50 bg-card/50 rounded-2xl border p-6">
+            <div className="border-gw-orange/25 from-gw-orange/8 rounded-2xl border bg-linear-to-br to-transparent p-6">
               <div className="from-gw-orange/15 to-gw-purple/10 mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-linear-to-br">
                 <UploadCloud className="h-5 w-5 text-white/90" aria-hidden />
               </div>
@@ -206,7 +207,7 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <div className="border-border/50 bg-card/50 rounded-2xl border p-6">
+            <div className="border-gw-purple/25 from-gw-purple/8 rounded-2xl border bg-linear-to-br to-transparent p-6">
               <div className="from-gw-purple/15 to-gw-orange/10 mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-linear-to-br">
                 <Scale className="h-5 w-5 text-white/90" aria-hidden />
               </div>
@@ -220,7 +221,7 @@ export default async function HomePage() {
             </div>
 
             <div className="border-border/50 bg-card/50 rounded-2xl border p-6">
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+              <div className="from-gw-orange/10 to-gw-purple/15 mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-linear-to-br">
                 <Gauge className="h-5 w-5 text-white/90" aria-hidden />
               </div>
               <p className="text-base font-semibold text-white">
@@ -276,6 +277,17 @@ export default async function HomePage() {
               <Globe2 className="h-3.5 w-3.5" aria-hidden />
               Real-world
             </Badge>
+          </div>
+
+          <div className="mt-10 flex justify-center md:hidden">
+            <Link href="/submit" className="w-full max-w-md">
+              <Button
+                size="lg"
+                className="from-gw-orange to-gw-purple w-full bg-linear-to-r px-12 py-7 text-lg font-semibold text-white hover:opacity-90"
+              >
+                Submit your method
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

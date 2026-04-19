@@ -1,6 +1,6 @@
 export const externalLinks = {
   gwFreerideWorkshop: 'https://sites.google.com/unimib.it/gwfreeride/home',
-  githubOrg: 'https://github.com/gwbenchmark?view_as=public',
+  githubOrg: 'https://github.com/gwbenchmark',
 };
 
 /** Plain text runs and `{ href, label }` links in reading order — edit as one paragraph. */
@@ -9,7 +9,7 @@ export type InlineSegment = string | InlineLink;
 
 export const homeCopy = {
   subtitle:
-    'Standardised benchmarks for simulation-based inference on gravitational-wave parameter estimation — with automated blind evaluation, purpose-built metrics, and a clear level ladder from easy on-ramps to production-style analyses.',
+    'Standardised benchmarks for simulation-based inference on gravitational-wave parameter estimation.',
   whoFor: [
     'A reproducible, levelled benchmark to compare methods fairly and understand failure modes.',
     'Benchmarks that start simple but move toward LVK/LISA-style parameter estimation constraints.',
@@ -73,31 +73,15 @@ export const aboutCopy = {
 
 /** One-line hero; keep the title card light. */
 export const benchmarksPageHeroSubtitle =
-  'Aligned-spin binary-black-hole tasks with a clear level ladder — from an easy shared track toward production-style analyses.';
+  'A levelled benchmark suite for simulation-based inference on gravitational-wave parameter estimation — starting simple, building toward production-style realism.';
 
-/** Compact glossary for a narrow sidebar (not the main narrative). */
-export const benchmarksAbbreviations: { term: string; text: string }[] = [
-  { term: 'GW', text: 'Gravitational waves.' },
-  {
-    term: 'PE',
-    text: 'Parameter estimation — inferring source parameters from data.',
-  },
-  {
-    term: 'SBI',
-    text: 'Simulation-based inference — train on simulator draws.',
-  },
-  { term: 'LVK', text: 'LIGO–Virgo–KAGRA ground-based network.' },
-  { term: 'BBH', text: 'Binary black hole merger.' },
-  { term: 'PSD', text: 'Power spectral density of the noise.' },
-];
-
-/** Short opening: physics in plain language, why PE/SBI, benchmark philosophy. */
+/** Short opening for CS audience. */
 export const benchmarksPageIntro = {
-  title: 'What this benchmark is about',
+  title: 'What the benchmark is about',
   paragraphs: [
-    'In the aligned-spin binary black hole setup, the two black holes spiral together with spins aligned with the orbit: it is a standard, slightly simplified class of mergers that still matches much of what ground-based detectors see, but is easier to specify and simulate than the fully generic spin-precessing case.',
-    'Parameter estimation means recovering quantities such as masses, spins, distance, and sky location from the noisy strain measured in multiple detectors. That inverse problem is Bayesian and high-dimensional, so the community invests heavily in simulation-based inference (SBI): neural or other learned components trained on waveform simulations, because each exact likelihood evaluation is expensive.',
-    'These benchmarks are deliberately simple and easy to use at the start: fixed simulators, noise, and priors so machine-learning researchers can compare methods fairly. As levels go up, tasks become harder and closer to production workflows (more parameters, more freedom), so gravitational-wave scientists can later test what still works outside the toy regime.',
+    'When two black holes merge, they produce a gravitational wave — a ripple in spacetime that stretches and compresses interferometer arms by a fraction of a proton diameter. Detectors record this as a noisy strain time series. The inference task is to recover the posterior distribution over source parameters (masses, spins, sky position, distance, orientation) given that data.',
+    'Because evaluating the exact likelihood requires expensive waveform simulations, the community invests heavily in simulation-based inference: train a neural network or other learned component once on simulations, then run inference on any new event in milliseconds. These benchmarks are designed to let researchers compare those methods on equal footing — standardised data formats, shared simulators, and blind evaluation against reference posteriors.',
+    'The level ladder starts with a clean five-parameter problem and progressively adds the complexity of real analyses. The same evaluation ideas extend to LISA (space-based) and PTA (pulsar timing) science, each of which brings a distinct set of inference challenges.',
   ],
 };
 
@@ -105,144 +89,156 @@ export type BenchmarkSpecRow = { aspect: string; detail: string };
 
 export type BenchmarkLadderLevel = {
   slug: string;
-  step: '0' | '1';
+  /** Short label shown in the timeline dot (e.g. "0", "1", "L0"). */
+  step: string;
   heading: string;
   tagline: string;
   timelineNotes: string[];
-  tableTitle: string;
-  rows: BenchmarkSpecRow[];
+  tableTitle?: string;
+  rows?: BenchmarkSpecRow[];
+  /** Controls dot and accent colour. */
+  accent: 'orange' | 'purple' | 'cyan';
+  /** Active levels have a solid dot; planned show a dashed/muted style. */
+  status: 'active' | 'planned';
 };
 
-/** Level ladder: copy next to each step + rows for the on-page specification tables. */
+/** LVK ground-based track — Level 0 and Level 1. */
 export const benchmarkLadderLevels: BenchmarkLadderLevel[] = [
   {
     slug: 'bbh-pe-l0',
     step: '0',
-    heading: 'Level 0',
+    heading: 'Level 0 — fixed extrinsic',
     tagline:
-      'Intrinsic parameters only (~5): extrinsic sky and timing are fixed for you.',
+      'Five-dimensional posterior estimation over intrinsic parameters only.',
+    accent: 'orange',
+    status: 'active',
     timelineNotes: [
-      'Extrinsic parameters describe where the signal is on the sky, how the binary is oriented toward Earth, distance, and arrival time across the network. Here they are held fixed by the benchmark, so your model only explores a smaller intrinsic space — good for debugging architectures and calibration on a realistic waveform family.',
-      'For machine learning, Level 0 is the friendly track: lower dimension, shared simulator and Gaussian noise with a fixed PSD, standard Bilby BBH prior, and blind or unblind splits so you can iterate quickly before tackling the full extrinsic problem.',
+      'The input to your model is a strain vector from three detectors (H1, L1, V1). Your task is to return samples from the posterior over five parameters: chirp mass (M\u1d9c), mass ratio (q), luminosity distance (d\u2097), and the two aligned spin components (\u03c7\u2081, \u03c7\u2082). All extrinsic parameters — sky location, geocentric arrival time, coalescence phase, polarisation, and inclination — are held at fixed, known values by the benchmark.',
+      'The noise is Gaussian with a fixed, known power spectral density, and the simulator is provided. Every participant uses the same forward model. This makes Level 0 a clean entry point: you can iterate on architectures and calibration without navigating the full extrinsic geometry. Both blind and unblind evaluation splits are available.',
     ],
-    tableTitle: 'Level 0 benchmark specification',
+    tableTitle: 'Level 0 specification',
     rows: [
       { aspect: 'Track slug', detail: 'bbh-pe-l0' },
+      { aspect: 'Source', detail: 'Aligned-spin binary black hole (BBH)' },
       {
-        aspect: 'Source physics',
-        detail: 'Aligned-spin binary black hole (BBH)',
+        aspect: 'Detectors',
+        detail: 'H1 \u00b7 L1 \u00b7 V1  (three-detector LVK network)',
       },
       {
-        aspect: 'Detector network',
-        detail: 'Three ground-based detectors (LVK-style geometry)',
-      },
-      {
-        aspect: 'Noise',
+        aspect: 'Inference target',
         detail:
-          'Gaussian noise with a fixed, known power spectral density (PSD)',
+          'M\u1d9c, q, d\u2097, \u03c7\u2081, \u03c7\u2082  (5 dimensions)',
       },
       {
-        aspect: 'Extrinsic parameters',
+        aspect: 'Extrinsic',
         detail:
-          'Fixed by the task (sky location fixed; coherent arrival times in at least two detectors as specified)',
+          'Fixed — sky position, time, phase, \u03c8, \u03b8\u2c7c\u2c7c held constant',
       },
-      {
-        aspect: 'Parameters to infer',
-        detail: 'About five intrinsic parameters (masses, spins, …)',
-      },
+      { aspect: 'Noise', detail: 'Gaussian \u00b7 fixed known PSD' },
       {
         aspect: 'Prior',
-        detail: 'Standard Bilby BBH prior shipped with the benchmark',
+        detail: 'Standard Bilby BBH prior (shipped with benchmark)',
       },
       {
         aspect: 'Simulator',
-        detail: 'Provided — everyone uses the same forward model',
+        detail: 'Provided — shared forward model for all participants',
       },
-      {
-        aspect: 'Evaluation splits',
-        detail: 'Support for blind and/or unblind datasets',
-      },
+      { aspect: 'Evaluation', detail: 'Blind and unblind splits available' },
     ],
   },
   {
     slug: 'bbh-pe-l1',
     step: '1',
-    heading: 'Level 1',
+    heading: 'Level 1 — full parameter space',
     tagline:
-      'Same setup as Level 0, but you also infer extrinsic parameters (11D).',
+      'Eleven-dimensional inference — same setup, extrinsic parameters now free.',
+    accent: 'purple',
+    status: 'active',
     timelineNotes: [
-      'Extrinsic parameters are now free: sky position, orientation, distance, and related quantities enter the state vector (eleven extrinsic dimensions in our published parameterisation). The likelihood is the same class of problem, but the posterior can be more complex (multiple modes, stronger degeneracies), and classical samplers (MCMC, nested sampling) need more compute per event.',
-      'For machine learning, Level 1 is the same data format and noise contract as Level 0, but your density model or sampling scheme must scale to a larger, more structured parameter space — a better stress test before future production-style levels with more pipeline freedom.',
+      'Same data format and noise contract as Level 0. The difference: six extrinsic parameters are no longer fixed. Sky position (RA, dec), geocentric arrival time, coalescence phase, polarisation angle (\u03c8), and inclination (\u03b8\u2c7c\u2c7c) are now part of the posterior. Combined with the five intrinsic parameters from Level 0, the full inference target is eleven-dimensional.',
+      'The posterior structure becomes more complex. Sky position in a three-detector network produces a characteristic ring-shaped degeneracy on the sphere, and inclination and distance are correlated. Classical nested samplers handle Level 1 but need significantly more compute per event — amortised SBI methods can still evaluate any new event in a single forward pass. Exposing that cost contrast is exactly what Level 1 is designed to do.',
     ],
-    tableTitle: 'Level 1 benchmark specification',
+    tableTitle: 'Level 1 specification',
     rows: [
       { aspect: 'Track slug', detail: 'bbh-pe-l1' },
+      { aspect: 'Source', detail: 'Same aligned-spin BBH class as Level 0' },
+      { aspect: 'Detectors', detail: 'Same H1 \u00b7 L1 \u00b7 V1 network' },
       {
-        aspect: 'Source physics',
-        detail: 'Same aligned-spin BBH class as Level 0',
-      },
-      {
-        aspect: 'Detector network',
-        detail: 'Same three-detector network as Level 0',
-      },
-      {
-        aspect: 'Noise',
-        detail: 'Same fixed-PSD Gaussian noise model as Level 0',
-      },
-      {
-        aspect: 'Extrinsic parameters',
+        aspect: 'Inference target',
         detail:
-          'Free — full extrinsic block (11 dimensions; exact ordering in the task sheet)',
+          'M\u1d9c, q, d\u2097, \u03c7\u2081, \u03c7\u2082 + RA, dec, t_geo, \u03c6, \u03c8, \u03b8\u2c7c\u2c7c  (11 dimensions)',
       },
+      { aspect: 'Extrinsic', detail: 'All six extrinsic parameters are free' },
+      { aspect: 'Noise', detail: 'Same fixed-PSD Gaussian model as Level 0' },
+      { aspect: 'Prior', detail: 'Same Bilby BBH prior family as Level 0' },
+      { aspect: 'Simulator', detail: 'Same shared forward model as Level 0' },
       {
-        aspect: 'Parameters to infer',
-        detail: 'Intrinsic plus extrinsic (full PE vector)',
-      },
-      {
-        aspect: 'Prior',
-        detail: 'Same Bilby BBH prior family as Level 0 unless noted otherwise',
-      },
-      {
-        aspect: 'Simulator',
-        detail: 'Same philosophy as Level 0 — shared forward model',
-      },
-      {
-        aspect: 'Difficulty vs Level 0',
+        aspect: 'vs. Level 0',
         detail:
-          'Larger sampling space; reference posteriors from standard samplers are more expensive to generate',
+          'Larger parameter space \u00b7 richer posterior geometry \u00b7 more expensive reference posteriors',
       },
     ],
   },
 ];
 
-/** Short line above the LVK / LISA / PTA cards. */
-export const benchmarksRoadmapIntro =
-  'We begin with ground-based BBH tasks; the same evaluation ideas should later cover space-based (LISA) and pulsar-timing (PTA) science once those tracks are ready.';
+/** LISA space-based track — scope under active design. */
+export const lisaLevels: BenchmarkLadderLevel[] = [
+  {
+    slug: 'mbhb-pe-lisa-l0',
+    step: 'L0',
+    heading: 'LISA Level 0 — scope under design',
+    tagline:
+      'MBHB inference with the reference LISA response: fixed noise, equal arm lengths, TDI 1.5.',
+    accent: 'cyan',
+    status: 'planned',
+    timelineNotes: [
+      'The philosophy matches LVK Level 0: tackle the real problem in a controlled setting. Fix the noise to the reference LISA PSD, assume equal arm lengths and circular spacecraft orbits, use TDI 1.5 rather than full TDI 2.0, and exclude precession. This strips away tooling complexity while preserving what makes LISA inference genuinely different: the full LISA detector response function, signal durations of weeks to months, and characteristic multimodal sky posteriors that arise in every MBHB observation regardless of SNR.',
+      'Massive black-hole binary signals differ from LVK BBH in every relevant way — sources range from millions to billions of solar masses, SNR is much higher, and signals are much longer. The sky-localisation posterior is always multimodal by the geometry of a single orbiting constellation, and some degeneracies have no analogue in the ground-based case. LISA Level 0 will be a genuinely distinct benchmark, not a rescaled version of the LVK tracks.',
+    ],
+  },
+];
 
-/** Labels for the three roadmap tiles (icons on the benchmarks page). */
+/** Short line above the three track cards. */
+export const benchmarksRoadmapIntro =
+  'Three distinct experimental regimes — each with its own detector geometry, data format, and inference challenges. We start with LVK; LISA and PTA follow as the benchmark matures.';
+
+/** Labels for the three track tiles. */
 export const benchmarksRoadmapCards = [
   {
     key: 'lvk',
-    title: 'LVK / ground',
-    body: 'Interferometric strain from Earth-based detectors — this is where Level 0 and Level 1 live today.',
+    title: 'LVK — ground-based',
+    statusLabel: 'Active',
+    accent: 'orange' as const,
+    body: 'Short strain bursts from Earth-based interferometers. The first benchmark levels live here: fast iteration, a shared simulator, and clear reference posteriors.',
   },
   {
     key: 'lisa',
-    title: 'LISA (outlook)',
-    body: 'Space-based timelines for massive black-hole binaries and galactic binaries — future benchmark generation.',
+    title: 'LISA — space-based',
+    statusLabel: 'Planning',
+    accent: 'purple' as const,
+    body: 'Heliocentric spacecraft constellation targeting massive black-hole binaries. Longer signals, higher SNR, a different sky-localisation geometry — Level 0 scope is under active design.',
   },
   {
     key: 'pta',
-    title: 'PTA (outlook)',
-    body: 'Pulsar timing arrays for very low-frequency waves — different data format, same need for clear tasks and metrics.',
+    title: 'PTA — pulsar timing',
+    statusLabel: 'Outlook',
+    accent: 'emerald' as const,
+    body: 'An ensemble of millisecond pulsars acting as a galaxy-scale detector. A fundamentally different data format — timing residuals and correlation matrices — with early benchmark ideas being explored.',
   },
 ] as const;
 
 export const benchmarksCopy = {
-  outlook:
-    'Longer term we expect additional tracks with more simulator and noise-model freedom for “does it work in our pipeline?” studies. For space-based and pulsar-timing science, LISA and PTA-style benchmarks remain on the roadmap — the outlook cards on this site are already a good home for that story once concrete tasks ship.',
+  lvkFuture:
+    'Higher levels will introduce more pipeline freedom — varying noise realisations, more flexible simulators, and eventually production-style settings where methods must handle detector artifacts and non-Gaussian noise. The level ladder idea stays the same: each step adds one axis of realism.',
   workInProgress:
-    'Task sheets, data releases, and evaluation servers are still being finalised. Nothing here should be read as frozen specification until the first public package and leaderboard launch.',
+    'Task sheets, data releases, and evaluation servers are still being finalised. Nothing here should be read as a frozen specification until the first public package and leaderboard launch.',
+};
+
+export const ptaCopy = {
+  intro:
+    'Pulsar timing arrays monitor an ensemble of millisecond pulsars spread across the Milky Way. A stochastic gravitational-wave background imprints correlated timing residuals across pulsar pairs — the Hellings-Downs correlation — and the inference targets are the statistical properties of that background rather than individual merger events.',
+  tasks:
+    'The data format is fundamentally different from interferometric data: correlation matrices and sky maps rather than strain time series. Early PTA benchmark ideas focus on self-contained classification tasks — for example, distinguishing isotropic from anisotropic gravitational-wave backgrounds — that do not require the full machinery of a production PTA analysis pipeline. Concrete benchmark designs are still being explored.',
 };
 
 export const evaluationCopy = {
@@ -288,48 +284,89 @@ export const dingoExample = {
   docsLabel: 'dingo-gw.readthedocs.io',
 };
 
+export type SubmitStep = {
+  number: string;
+  title: string;
+  description: string;
+};
+
+/** Short per-level blurbs; full task sheets will ship with the first release. */
 export type SubmitBenchmarkSection = {
   slug: string;
   title: string;
-  intro: string;
-  checklist: string[];
+  summary: string;
 };
 
 export const submitCopy = {
-  intro:
-    'We aim to run blind evaluations: you run inference on a published test set, submit posterior samples in a prescribed format, and receive scores against reference posteriors. You can then opt in to a public leaderboard for the benchmark level you entered.',
-  workInProgress:
-    'The benchmark is not finished yet — submission formats, blind splits, and the upload path are still in design. The lists below describe what we expect you will need conceptually; exact schemas and validation will ship with the first release package.',
-  globalChecklist: [
-    'Register or note a team / method identifier for leaderboard display.',
-    'Reproduce the training and evaluation environment (Python version, dependency pins) once the reference repository is published.',
-    'Follow the parameter ordering and units in the task specification so samples line up with reference posteriors.',
-  ],
+  heroSubtitle:
+    'Choose a benchmark, download its task package, then upload posterior samples for scoring.',
+
+  wipBanner: {
+    label: 'Work in progress',
+    title: 'Submission details are not final yet',
+    body: 'Exact file formats, manifests, and the upload path are still being built. When they are ready, the definitive instructions will appear on this page. Datasets and automated evaluation are planned to live on Hugging Face; the same links and summaries will be mirrored here.',
+  },
+
+  steps: [
+    {
+      number: '01',
+      title: 'Choose a benchmark',
+      description:
+        'Pick the track and level you want to enter (for now: LVK Level 0 or Level 1), then download the release from Hugging Face once it is published — strain, PSD, metadata, simulator, and any reference materials for that level.',
+    },
+    {
+      number: '02',
+      title: 'Run your inference',
+      description:
+        'Train or configure your method using the released simulations and rules for that level, then run it on every test observation and collect posterior samples in the task parameterisation.',
+    },
+    {
+      number: '03',
+      title: 'Package to the specification',
+      description:
+        'Arrange samples and sidecar metadata exactly as the release notes describe — layout, naming, dtypes, and parameter ordering will be validated automatically once the checker ships.',
+    },
+    {
+      number: '04',
+      title: 'Upload',
+      description:
+        'Upload your posterior files through the channel we announce, together with any required companion fields (team or method id, seeds, short run notes). You receive scores against reference posteriors and can opt in to the public leaderboard.',
+    },
+  ] satisfies SubmitStep[],
+
+  dataDownload: {
+    title: 'Downloading the data',
+    intro:
+      'We expect to host datasets on Hugging Face. The on-disk layout is still being finalised; the intent is roughly as follows.',
+    bullets: [
+      'Strain as NumPy NPZ files in the frequency domain, together with the detector PSD and the frequency array.',
+      'Metadata (event identifiers, splits, and related columns) as Parquet.',
+    ],
+    uploadReminder:
+      'You will submit posterior samples in a prescribed layout, plus any small sidecar fields the release asks for. Exact schemas will ship with the first public package.',
+  },
+
+  benchmarkSectionIntro:
+    'LVK Level 0 and Level 1 share the same BBH setting and on-disk data layout; only the parameter dimensionality differs. See the Benchmarks page for physics and priors. LISA and PTA are separate road-map tracks and are not on this submission path yet.',
+
   byBenchmark: [
     {
       slug: 'bbh-pe-l0',
-      title: 'Level 0 — aligned-spin BBH, fixed extrinsic',
-      intro:
-        'Submit posteriors over the intrinsic parameter vector defined in the Level 0 task sheet (~5 parameters), under the standard Bilby BBH prior and the provided simulator. Extrinsic parameters are not inferred: they are fixed by the benchmark.',
-      checklist: [
-        'Train or adapt your method using the released simulations and fixed PSD Gaussian noise model.',
-        'Run inference on every observation in the blind (or unblind) test set for the track you enter.',
-        'Output posterior samples in the required format for the intrinsic parameters only, unless the task explicitly asks for additional quantities.',
-        'Record hyperparameters, random seeds, and training budget — we will ask for light provenance metadata alongside uploads.',
-      ],
+      title: 'Level 0 — fixed extrinsic (bbh-pe-l0)',
+      summary:
+        'Five intrinsic parameters; extrinsic quantities fixed by the benchmark. Full column ordering, splits, and evaluation rules will be documented in the release.',
     },
     {
       slug: 'bbh-pe-l1',
-      title: 'Level 1 — aligned-spin BBH, full extrinsic (11D)',
-      intro:
-        'Same noise model and prior family as Level 0, but submit posteriors over the full parameter vector, including eleven extrinsic dimensions, exactly as parameterised in the released specification.',
-      checklist: [
-        'Ensure your model covers the enlarged extrinsic space (11D) without collapsing corners that the reference samplers explore.',
-        'Expect longer runtimes per event for classical baselines; amortised methods should report wall-clock and hardware.',
-        'Use the same sample format as Level 0 where possible so evaluation tooling can stay shared; any deltas will be documented in the Level 1 package.',
-      ],
+      title: 'Level 1 — full parameter space (bbh-pe-l1)',
+      summary:
+        'Same data as Level 0; infer the full eleven-dimensional parameter vector. Task details will be spelled out alongside the Level 0 package.',
     },
   ] satisfies SubmitBenchmarkSection[],
-  uploadNote:
-    'The upload mechanism (web form, API, or scripted ingest) and blind-evaluation workflow are still being implemented. Watch the gwbenchmark GitHub organisation and this page for the first runnable instructions.',
+
+  laterLevelsNote:
+    'Higher benchmark levels may ask for more than posterior files alone — for example runnable simulator code, pinned dependencies, or Docker images so results can be reproduced under stricter pipeline rules. For Level 0 and Level 1 we intend to keep the barrier low: posteriors plus light metadata should be enough.',
+
+  footerNote:
+    'Questions while the pipeline is still moving: use the contact options on the About page.',
 };

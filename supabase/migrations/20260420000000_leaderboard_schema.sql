@@ -1,5 +1,4 @@
--- Baseline schema for leaderboard data used by the app and later seed migrations.
--- Runs before 20260413120000_replace_benchmarks_bbh_l0_l1.sql (which DELETEs from these tables).
+-- App tables for benchmarks / leaderboards (public only). No auth/storage dumps.
 
 create extension if not exists "pgcrypto";
 
@@ -56,18 +55,23 @@ alter table public.benchmark_metrics enable row level security;
 alter table public.submissions enable row level security;
 alter table public.submission_scores enable row level security;
 
+drop policy if exists "metrics_select_public" on public.metrics;
 create policy "metrics_select_public"
   on public.metrics for select to anon, authenticated using (true);
 
+drop policy if exists "benchmarks_select_public" on public.benchmarks;
 create policy "benchmarks_select_public"
   on public.benchmarks for select to anon, authenticated using (true);
 
+drop policy if exists "benchmark_metrics_select_public" on public.benchmark_metrics;
 create policy "benchmark_metrics_select_public"
   on public.benchmark_metrics for select to anon, authenticated using (true);
 
+drop policy if exists "submissions_select_public" on public.submissions;
 create policy "submissions_select_public"
   on public.submissions for select to anon, authenticated using (true);
 
+drop policy if exists "submission_scores_select_public" on public.submission_scores;
 create policy "submission_scores_select_public"
   on public.submission_scores for select to anon, authenticated using (true);
 

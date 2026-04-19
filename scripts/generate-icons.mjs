@@ -26,8 +26,14 @@ async function main() {
 
   await fs.writeFile(path.join(publicDir, 'favicon-32x32.png'), favicon32);
   await fs.writeFile(path.join(publicDir, 'apple-touch-icon.png'), apple180);
-  await fs.writeFile(path.join(publicDir, 'android-chrome-192x192.png'), icon192);
-  await fs.writeFile(path.join(publicDir, 'android-chrome-512x512.png'), icon512);
+  await fs.writeFile(
+    path.join(publicDir, 'android-chrome-192x192.png'),
+    icon192
+  );
+  await fs.writeFile(
+    path.join(publicDir, 'android-chrome-512x512.png'),
+    icon512
+  );
 
   const ico = await pngToIco([favicon32]);
   await fs.writeFile(path.join(publicDir, 'favicon.ico'), ico);
@@ -37,4 +43,3 @@ async function main() {
 }
 
 await main();
-

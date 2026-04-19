@@ -4,6 +4,7 @@ import type {
   Metric,
   SubmissionScore,
 } from '@/types/database';
+import { evaluationOrderLeaderboardMetrics } from '@/lib/leaderboard-metrics';
 import { createClient } from './server';
 
 export async function getBenchmarks(): Promise<Benchmark[]> {
@@ -11,7 +12,7 @@ export async function getBenchmarks(): Promise<Benchmark[]> {
   const { data, error } = await supabase
     .from('benchmarks')
     .select('*')
-    .order('created_at');
+    .order('slug');
 
   if (error) throw error;
   return data as Benchmark[];
@@ -28,9 +29,10 @@ export async function getMetricsForBenchmark(
 
   if (error) throw error;
 
-  return (data as unknown as { metric_id: string; metrics: Metric }[]).map(
-    (row) => row.metrics
-  );
+  const metrics = (
+    data as unknown as { metric_id: string; metrics: Metric }[]
+  ).map((row) => row.metrics);
+  return evaluationOrderLeaderboardMetrics(metrics);
 }
 
 export async function getLeaderboard(
@@ -83,7 +85,10 @@ export async function getLeaderboard(
     })
   );
 
-  return { entries, metrics };
+  return {
+    entries,
+    metrics: evaluationOrderLeaderboardMetrics(metrics),
+  };
 }
 
 export async function getAllMetrics(): Promise<Metric[]> {

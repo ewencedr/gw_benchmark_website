@@ -321,6 +321,10 @@ port = 54327
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
 
+# Persistent Supabase branch (optional). project_id = branch project ref from dashboard / CLI.
+[remotes.staging]
+project_id = "pwowaggfzonuxmtwjsvj"
+
 # Experimental features may be deprecated any time
 [experimental]
 # Configures Postgres storage engine to use OrioleDB (S3)

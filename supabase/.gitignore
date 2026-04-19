@@ -2,6 +2,9 @@
 .branches
 .temp
 
+# macOS junk in migrations/ breaks version matching (CLI skips non-*.sql pattern files).
+.DS_Store
+
 # dotenvx
 .env.keys
 .env.local
